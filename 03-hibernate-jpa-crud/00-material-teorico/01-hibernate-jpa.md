@@ -75,9 +75,9 @@ Hibernate y JPA utilizan JDBC internamente para interactuar con la base de datos
 ### Diagrama: Comunicación con JDBC
 ```mermaid
 flowchart LR
-    A[Aplicación Java] --&gt; B[JDBC API]
-    B --&gt; C[Driver JDBC]
-    C --&gt; D[Base de Datos]
+    A[Aplicación Java] --> B[JDBC API]
+    B --> C[Driver JDBC]
+    C --> D[Base de Datos]
 ```
 
 ---
