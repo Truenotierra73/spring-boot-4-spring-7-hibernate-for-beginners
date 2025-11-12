@@ -27,9 +27,9 @@ Hibernate es un framework de mapeo objeto-relacional (ORM) para Java. Permite ma
 ### Diagrama: Comunicación Java ↔ DB con Hibernate
 ```mermaid
 flowchart LR
-    A[Aplicación Java] --&gt; B[Hibernate ORM]
-    B --&gt; C[JDBC]
-    C --&gt; D[Base de Datos]
+    A[Aplicación Java] --> B[Hibernate ORM]
+    B --> C[JDBC]
+    C --> D[Base de Datos]
 ```
 
 ---
