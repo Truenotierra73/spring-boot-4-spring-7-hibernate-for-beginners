@@ -1,5 +1,5 @@
-- Utiliza Java 17 o superior.
-- Utiliza Spring Boot 3 y Spring 6.
+- Utiliza Java 25 o superior.
+- Utiliza Spring Boot 4 y Spring 7.
 - Utiliza Maven como sistema de construcción.
 - Utiliza buenas prácticas de programación.
 - Utiliza patrones de diseño cuando sea apropiado.
