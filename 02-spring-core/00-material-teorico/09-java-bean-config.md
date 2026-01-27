@@ -37,7 +37,7 @@ En este ejemplo:
 
 ## Cómo hacer uso del bean mediante inyección de dependencias
 
-Una vez que el bean está definido en una clase de configuración, puedes inyectarlo en otras clases utilizando la anotación `@Autowired` o mediante inyección por constructor (recomendada en Spring Boot 3 y Spring 6).
+Una vez que el bean está definido en una clase de configuración, puedes inyectarlo en otras clases utilizando la anotación `@Autowired` o mediante inyección por constructor (recomendada en Spring Boot 4 y Spring 7).
 
 **Ejemplo de inyección por constructor:**
 
@@ -114,4 +114,4 @@ Así, el bean será accesible por cualquiera de esos nombres.
 
 ---
 
-> **Nota:** Utilizar configuración Java es una buena práctica recomendada en proyectos modernos con Spring Boot y Spring Framework 6, ya que mejora la mantenibilidad y claridad del código.
+> **Nota:** Utilizar configuración Java es una buena práctica recomendada en proyectos modernos con Spring Boot 4 y Spring Framework 7, ya que mejora la mantenibilidad y claridad del código.

@@ -12,7 +12,7 @@ El Entity Manager se utiliza para:
 
 ## Requisitos necesarios para utilizar Entity Manager
 - Tener configurado un proveedor de JPA (por ejemplo, Hibernate) en el proyecto.
-- Definir una unidad de persistencia (`persistence.xml`) o utilizar la configuración de Spring Boot en `application.properties` o `application.yml`.
+- Definir una unidad de persistencia (`persistence.xml`) o utilizar la configuración de Spring Boot 4 en `application.properties` o `application.yml`.
 - Tener las entidades JPA correctamente anotadas con `@Entity`.
 - Inyectar o crear una instancia de `EntityManager` en la clase DAO o repositorio.
 
@@ -51,7 +51,7 @@ sequenceDiagram
     DAO-->>App: Devuelve respuesta
 ```
 
-> **Comentario:** En aplicaciones modernas con Spring Boot, la inyección del Entity Manager se realiza automáticamente y su uso es transparente para el desarrollador, facilitando la implementación del patrón DAO.
+> **Comentario:** En aplicaciones modernas con Spring Boot 4 y Java 25, la inyección del Entity Manager se realiza automáticamente y su uso es transparente para el desarrollador, facilitando la implementación del patrón DAO.
 
 # JPA Repository
 
@@ -87,6 +87,6 @@ Spring Data JPA genera automáticamente la implementación de los métodos defin
 - Proyectos donde se busca rapidez de desarrollo y simplicidad.
 
 ## ¿Se pueden utilizar ambos en un proyecto?
-Sí, es totalmente válido y común utilizar ambos enfoques en un mismo proyecto. Se pueden definir repositorios que extienden `JpaRepository` para la mayoría de las operaciones y, cuando sea necesario, inyectar el `EntityManager` para operaciones avanzadas o personalizadas.
+Sí, es totalmente válido y común utilizar ambos enfoques en un mismo proyecto con Spring Boot 4. Se pueden definir repositorios que extienden `JpaRepository` para la mayoría de las operaciones y, cuando sea necesario, inyectar el `EntityManager` para operaciones avanzadas o personalizadas.
 
-> **Comentario:** Esta flexibilidad permite aprovechar la productividad de los repositorios y el poder del Entity Manager según las necesidades de cada caso.
+> **Comentario:** Esta flexibilidad permite aprovechar la productividad de los repositorios y el poder del Entity Manager según las necesidades de cada caso. Spring Boot 4 con Java 25 mantiene plena compatibilidad con ambos enfoques.

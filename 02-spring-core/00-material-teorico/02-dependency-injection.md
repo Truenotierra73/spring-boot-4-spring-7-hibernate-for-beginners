@@ -85,7 +85,7 @@ por el contenedor. Puede aplicarse a constructores, métodos setter o directamen
 ### ¿Es obligatoria?
 
 - **Constructor:** Desde Spring 4.3, si una clase tiene un único constructor, la anotación `@Autowired` no es
-  obligatoria en el constructor, ya que Spring lo detecta automáticamente.
+  obligatoria en el constructor, ya que Spring lo detecta automáticamente. Esta práctica continúa en Spring 7.
 - **Setter y campo:** Es obligatoria para que Spring realice la inyección.
 - **Varios constructores:** Se debe indicar explícitamente cuál debe usar Spring con `@Autowired`.
 

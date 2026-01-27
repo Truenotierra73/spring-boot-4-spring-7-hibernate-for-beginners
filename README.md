@@ -1,6 +1,6 @@
-# Curso de Spring 6 y Spring Boot 3
+# Curso de Spring 7 y Spring Boot 4
 
-Este repositorio contiene los ejemplos, ejercicios y proyectos desarrollados durante el curso de **Spring 6** y **Spring Boot 3**. El objetivo es proporcionar una guía práctica y estructurada para aprender los conceptos fundamentales y avanzados del desarrollo de aplicaciones empresariales con Java, utilizando las últimas versiones de Spring y Spring Boot.
+Este repositorio contiene los ejemplos, ejercicios y proyectos desarrollados durante el curso de **Spring 7** y **Spring Boot 4**. El objetivo es proporcionar una guía práctica y estructurada para aprender los conceptos fundamentales y avanzados del desarrollo de aplicaciones empresariales con Java, utilizando las últimas versiones de Spring y Spring Boot.
 
 ## Estructura del repositorio
 
@@ -36,7 +36,7 @@ Cada carpeta corresponde a un módulo o sección del curso, abordando diferentes
 
 ## Requisitos
 
-- Java 17 o superior
+- Java 25 o superior
 - Maven
 
 ## Notas
@@ -48,4 +48,4 @@ Cada carpeta corresponde a un módulo o sección del curso, abordando diferentes
 
 > **Autor:** Agustín Bollati
 > 
-> **Curso:** Spring 6 y Spring Boot 3 para principiantes
+> **Curso:** Spring 7 y Spring Boot 4 para principiantes

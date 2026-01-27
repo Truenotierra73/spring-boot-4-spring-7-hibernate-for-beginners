@@ -1,24 +1,25 @@
-# Proceso de desarrollo con JPA en Spring Boot
+# Proceso de desarrollo con JPA en Spring Boot 4
 
-A continuación se describe el proceso recomendado para desarrollar una aplicación con JPA en Spring Boot, siguiendo
-buenas prácticas y utilizando ejemplos para cada paso.
+A continuación se describe el proceso recomendado para desarrollar una aplicación con JPA en Spring Boot 4, siguiendo
+buenas prácticas y utilizando ejemplos compatibles con Java 25.
 
 ## 1. Configuración del proyecto
 
-Agrega las dependencias necesarias en tu archivo `pom.xml`:
+Agrega las dependencias necesarias en tu archivo `pom.xml` para Spring Boot 4:
 
 ```xml
-
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-data-jpa</artifactId>
 </dependency>
 <dependency>
-<groupId>mysql</groupId>
-<artifactId>mysql-connector-j</artifactId>
-<scope>runtime</scope>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <scope>runtime</scope>
 </dependency>
 ```
+
+> **Nota:** Asegúrate de usar Spring Boot 4 y Java 25 para aprovechar las últimas características y mejoras de rendimiento.
 
 ## 2. Configuración de la base de datos
 
@@ -74,6 +75,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 > - Proporciona métodos CRUD y de consulta listos para usar.
 > - Permite definir consultas personalizadas mediante métodos de la interfaz o anotaciones.
 > - Reduce el código repetitivo y mejora la mantenibilidad.
+> - Totalmente compatible con Spring Boot 4 y Java 25.
 
 ### b) Usando DAO y EntityManager (mayor control y flexibilidad)
 
@@ -158,7 +160,7 @@ Puedes combinar ambos enfoques en un mismo proyecto según las necesidades de ca
 ## 5. Implementación de servicios
 
 Puedes implementar la capa de servicios utilizando tanto `JpaRepository` como el patrón DAO + EntityManager. A
-continuación se muestran ambos enfoques:
+continuación se muestran ambos enfoques compatibles con Spring Boot 4:
 
 ### a) Usando JpaRepository
 
@@ -496,17 +498,19 @@ public class Cliente {
 
 ---
 
-> **Buenas prácticas:**
+> **Buenas prácticas en Spring Boot 4 con Java 25:**
 > - Utiliza nombres descriptivos para entidades y atributos.
 > - Aplica validaciones y restricciones en las entidades.
 > - Separa la lógica de negocio en servicios.
 > - Utiliza DTOs para exponer datos en la API.
 > - Documenta tu código y utiliza comentarios en español.
+> - Aprovecha las características modernas de Java 25 (registros, pattern matching, etc.).
 
 # Referencias oficiales
 
 - [Documentación oficial de Spring Data JPA](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)
 - [Documentación oficial de Hibernate ORM](https://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html)
 - [Documentación oficial de JPA (Jakarta Persistence)](https://jakarta.ee/specifications/persistence/3.1/jakarta-persistence-spec-3.1.html)
-- [Documentación oficial de Spring Boot](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
+- [Documentación oficial de Spring Boot 4](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
 - [Documentación oficial de MySQL](https://dev.mysql.com/doc/)
+- [Novedades de Java 25](https://openjdk.org/projects/jdk/25/)

@@ -2,7 +2,7 @@
 Maven es una herramienta de gestión y automatización de proyectos Java. Permite compilar, probar, empaquetar y gestionar dependencias de forma sencilla.
 
 ## ¿Es necesario instalar Maven globalmente?
-No es obligatorio instalar Maven en tu sistema. Los proyectos Spring Boot suelen incluir el Maven Wrapper (`mvnw` y `mvnw.cmd`), que permite ejecutar Maven sin instalarlo globalmente. Solo necesitas tener Java instalado.
+No es obligatorio instalar Maven en tu sistema. Los proyectos Spring Boot suelen incluir el Maven Wrapper (`mvnw` y `mvnw.cmd`), que permite ejecutar Maven sin instalarlo globalmente. Solo necesitas tener Java 25 o superior instalado.
 
 ## Empaquetar la aplicación
 Para empaquetar tu aplicación en un archivo JAR ejecutable:

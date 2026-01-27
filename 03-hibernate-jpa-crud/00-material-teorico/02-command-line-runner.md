@@ -4,6 +4,8 @@
 
 `CommandLineRunner` es una interfaz funcional proporcionada por Spring Boot que permite ejecutar código específico justo después de que la aplicación Spring haya iniciado completamente. Es útil para ejecutar tareas de inicialización, cargar datos de prueba, o realizar cualquier acción que deba ejecutarse una vez que el contexto de Spring esté listo.
 
+> **Nota:** Esta funcionalidad está disponible desde las primeras versiones de Spring Boot y se mantiene sin cambios en Spring Boot 4 con Java 25.
+
 ## ¿Para qué sirve?
 
 - Ejecutar lógica de inicialización al arrancar la aplicación.
@@ -77,13 +79,13 @@ public class CruddemoApplication {
     }
 
     /**
-     * Ejemplo de CommandLineRunner definido como Bean.
+     * Ejemplo de CommandLineRunner definido como Bean en Spring Boot 4.
      * Este bean se ejecutará automáticamente al iniciar la aplicación.
      */
     @Bean
     public CommandLineRunner commandLineRunner() {
         return args -> {
-            System.out.println("Hello World");
+            System.out.println("Hello World desde Spring Boot 4 y Java 25");
         };
     }
 }
