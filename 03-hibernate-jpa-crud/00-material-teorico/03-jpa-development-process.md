@@ -8,18 +8,20 @@ buenas prácticas y utilizando ejemplos compatibles con Java 25.
 Agrega las dependencias necesarias en tu archivo `pom.xml` para Spring Boot 4:
 
 ```xml
+
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-data-jpa</artifactId>
 </dependency>
 <dependency>
-    <groupId>mysql</groupId>
-    <artifactId>mysql-connector-j</artifactId>
-    <scope>runtime</scope>
+<groupId>mysql</groupId>
+<artifactId>mysql-connector-j</artifactId>
+<scope>runtime</scope>
 </dependency>
 ```
 
-> **Nota:** Asegúrate de usar Spring Boot 4 y Java 25 para aprovechar las últimas características y mejoras de rendimiento.
+> **Nota:** Asegúrate de usar Spring Boot 4 y Java 25 para aprovechar las últimas características y mejoras de
+> rendimiento.
 
 ## 2. Configuración de la base de datos
 
@@ -364,6 +366,9 @@ continuación, se listan las más utilizadas, indicando si es posible especifica
 
 - `@Column`: Configura detalles de la columna.
     - **¿Permite nombre alternativo?** Sí, mediante el parámetro `name`.
+    - **¿Es opcional?**: Si no se especifica, el nombre de la columna será el mismo que el del atributo. Aunque es
+      opcional, se recomienda usarla para definir restricciones, configuraciones adicionales y no tener inconvenientes
+      con los nombres de columnas.
     - **Ejemplo:**
       ```java
       @Column(name = "nombre_columna", nullable = false, length = 50)
