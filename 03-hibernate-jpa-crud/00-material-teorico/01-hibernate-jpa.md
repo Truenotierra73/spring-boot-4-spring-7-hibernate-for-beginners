@@ -86,21 +86,21 @@ flowchart LR
 
 En una aplicación Spring Boot 4, la configuración de JDBC se realiza principalmente en el archivo `application.properties` o `application.yml`. Aquí se definen los parámetros de conexión a la base de datos, el driver JDBC y otras propiedades relevantes. Spring Boot autoconfigura el DataSource y gestiona la conexión.
 
-### Ejemplo de configuración en `application.properties` para MySQL 9.4 con Java 25
+### Ejemplo de configuración en `application.properties` para MariaDB 12.2 con Java 25
 
 ```properties
 # Configuración de la URL de conexión JDBC
-spring.datasource.url=jdbc:mysql://localhost:3306/mi_base_de_datos?useSSL=false&serverTimezone=UTC
+spring.datasource.url=jdbc:mariadb://localhost:3306/mi_base_de_datos?useSSL=false&serverTimezone=UTC
 
 # Usuario y contraseña de la base de datos
 spring.datasource.username=usuario
 spring.datasource.password=contraseña
 
-# Driver JDBC de MySQL (compatible con Java 25)
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+# Driver JDBC de MariaDB (compatible con Java 25)
+spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
-# Dialecto de Hibernate para MySQL
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+# Dialecto de Hibernate para MariaDB
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDBDialect
 
 # Mostrar SQL generado por Hibernate
 spring.jpa.show-sql=true
