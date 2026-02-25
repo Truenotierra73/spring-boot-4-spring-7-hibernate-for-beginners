@@ -50,4 +50,14 @@ public class StudentDAOImpl implements StudentDAO {
 
 		return query.getResultList();
 	}
+
+	// Implementar el método findByLastName() para leer los estudiantes de la base de datos que tengan un apellido específico
+	@Override
+	public List<Student> findByLastName(String lastName) {
+		TypedQuery<Student> query = this.entityManager.createQuery("SELECT s FROM Student s WHERE s.lastName = :theData", Student.class);
+
+		query.setParameter("theData", lastName);
+
+		return query.getResultList();
+	}
 }

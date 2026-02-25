@@ -25,8 +25,18 @@ public class CruddemoApplication {
 //			createMultipleStudents(studentDAO);
 //			readStudent(studentDAO);
 //			queryForStudents(studentDAO);
-			queryForStudentsOrderByLastName(studentDAO);
+//			queryForStudentsOrderByLastName(studentDAO);
+			queryForStudentsByLastName(studentDAO);
 		};
+	}
+
+	private void queryForStudentsByLastName(StudentDAO studentDAO) {
+		// Obtener los estudiantes de la base de datos que tengan un apellido específico
+		System.out.println("Getting students with last name: Vegas");
+		List<Student> students = studentDAO.findByLastName("Vegas");
+
+		// Mostrar los estudiantes obtenidos
+		students.forEach(student -> System.out.println(student));
 	}
 
 	private void queryForStudentsOrderByLastName(StudentDAO studentDAO) {
