@@ -67,4 +67,24 @@ public class StudentDAOImpl implements StudentDAO {
 	public void update(Student student) {
 		this.entityManager.merge(student);
 	}
+
+	// Implementar el método delete() para eliminar un estudiante en la base de datos
+	@Override
+	@Transactional
+	public void delete(Integer id) {
+		Student student = this.entityManager.find(Student.class, id);
+
+		if (student != null) {
+			this.entityManager.remove(student);
+		}
+	}
+
+	@Override
+	@Transactional
+	public int deleteAll() {
+		TypedQuery<Student> query = this.entityManager.createQuery("DELETE FROM Student s", Student.class);
+		int numRowsDeleted = query.executeUpdate();
+
+		return numRowsDeleted;
+	}
 }
