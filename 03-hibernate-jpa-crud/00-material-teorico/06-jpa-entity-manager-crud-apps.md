@@ -72,7 +72,7 @@ El método clave es `entityManager.persist(entidad)`.
 ### Flujo
 
 ```
-Objeto Java  →  entityManager.persist()  →  INSERT INTO estudiante ...
+Objeto Java  →  entityManager.persist()  →  INSERT INTO estudiante (nombre, apellido, email) VALUES (?, ?, ?)
 ```
 
 ### DAO
@@ -117,6 +117,12 @@ System.out.println("Estudiante guardado con ID: " + nuevo.getId());
 
 Se utiliza para **consultar datos** de la base de datos.  
 Los métodos clave son `entityManager.find()` para búsqueda por ID y JPQL para consultas más complejas.
+
+### Flujo
+
+```
+Objeto Java  →  entityManager.find() o JPQL  →  SELECT * FROM estudiante WHERE ...
+```
 
 ### Buscar por ID
 
@@ -164,7 +170,7 @@ El método clave es `entityManager.merge(entidad)`.
 ### Flujo
 
 ```
-Buscar entidad  →  Modificar atributos  →  entityManager.merge()  →  UPDATE ...
+Buscar entidad  →  Modificar atributos  →  entityManager.merge()  →  UPDATE estudiante SET ... WHERE id = ?
 ```
 
 ### DAO
