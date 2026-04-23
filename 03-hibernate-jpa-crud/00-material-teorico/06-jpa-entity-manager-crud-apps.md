@@ -272,6 +272,407 @@ public int eliminarPorDominioEmail(String dominio) {
 
 ---
 
+## Creación de tablas con JPA/Hibernate
+
+### ¿Cómo genera Hibernate las tablas automáticamente?
+
+Hibernate puede **inspeccionar las entidades Java anotadas** y, a partir de ellas, generar automáticamente el esquema SQL de la base de datos (tablas, columnas, constraints, índices, etc.).  
+Este proceso se conoce como **DDL (Data Definition Language) auto-generation** y se controla mediante la propiedad `spring.jpa.hibernate.ddl-auto`.
+
+### Anotaciones JPA para mapear el esquema
+
+#### Anotaciones de entidad y tabla
+
+| Anotación | Nivel | Descripción |
+|-----------|-------|-------------|
+| `@Entity` | Clase | Marca la clase como entidad JPA gestionada por Hibernate |
+| `@Table` | Clase | Especifica el nombre de la tabla y sus atributos (`name`, `schema`, `uniqueConstraints`, `indexes`) |
+| `@Id` | Campo | Declara la clave primaria |
+| `@GeneratedValue` | Campo | Estrategia de generación del ID (`IDENTITY`, `SEQUENCE`, `TABLE`, `AUTO`, `UUID`) |
+| `@Column` | Campo | Mapeo detallado de columna: `name`, `nullable`, `unique`, `length`, `precision`, `scale` |
+| `@Lob` | Campo | Columna de tipo `TEXT`/`BLOB` para datos grandes |
+| `@Temporal` | Campo | Tipo de dato temporal (`DATE`, `TIME`, `TIMESTAMP`) — obsoleto en JPA 3.x con Java `LocalDate` |
+| `@Enumerated` | Campo | Persiste un enum como `ORDINAL` (número) o `STRING` (nombre) |
+| `@Transient` | Campo | Excluye el campo del mapeo (no se persiste) |
+
+#### Anotaciones de constraints y rendimiento
+
+```java
+// Ejemplo completo de entidad con anotaciones de esquema
+@Entity
+@Table(
+    name = "estudiante",
+    uniqueConstraints = @UniqueConstraint(
+        name = "uk_estudiante_email",
+        columnNames = "email"
+    ),
+    indexes = @Index(
+        name = "idx_estudiante_apellido",
+        columnList = "apellido"
+    )
+)
+public class Estudiante {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    // Columna obligatoria, máximo 100 caracteres
+    @Column(name = "nombre", nullable = false, length = 100)
+    private String nombre;
+
+    // Columna obligatoria, máximo 100 caracteres
+    @Column(name = "apellido", nullable = false, length = 100)
+    private String apellido;
+
+    // Columna única, obligatoria, máximo 255 caracteres
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    // Campo calculado: no se persiste en la BD
+    @Transient
+    private String nombreCompleto;
+}
+```
+
+### Flujo: código Java → JPA/Hibernate → SQL → Base de datos
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        FLUJO DE CREACIÓN                            │
+│                                                                      │
+│  1. Clase Java anotada con @Entity, @Table, @Column, etc.           │
+│            │                                                         │
+│            ▼                                                         │
+│  2. Hibernate lee los metadatos de las anotaciones al arrancar       │
+│            │                                                         │
+│            ▼                                                         │
+│  3. Hibernate genera el DDL según la estrategia configurada          │
+│     (create, update, validate, none, create-drop)                    │
+│            │                                                         │
+│            ▼                                                         │
+│  4. Se ejecutan los comandos SQL sobre la base de datos              │
+│     CREATE TABLE, ALTER TABLE, DROP TABLE, etc.                      │
+│            │                                                         │
+│            ▼                                                         │
+│  5. La base de datos confirma la operación                           │
+│     → Tablas listas para persistir entidades                         │
+└─────────────────────────────────────────────────────────────────────┘
+
+Ejemplo del DDL generado para la entidad Estudiante:
+
+  CREATE TABLE estudiante (
+      id       BIGINT       NOT NULL AUTO_INCREMENT,
+      nombre   VARCHAR(100) NOT NULL,
+      apellido VARCHAR(100) NOT NULL,
+      email    VARCHAR(255) NOT NULL UNIQUE,
+      PRIMARY KEY (id)
+  );
+
+  CREATE INDEX idx_estudiante_apellido ON estudiante (apellido);
+```
+
+---
+
+### Configuración: `spring.jpa.hibernate.ddl-auto`
+
+Esta propiedad controla **qué acción realiza Hibernate sobre el esquema** al iniciar la aplicación.
+
+#### Valores disponibles
+
+| Valor | Comportamiento | Destruye datos |
+|-------|---------------|----------------|
+| `none` | No realiza ninguna acción sobre el esquema | No |
+| `validate` | Valida que el esquema existente coincida con las entidades; lanza error si no coincide | No |
+| `update` | Compara entidades vs. esquema existente y aplica los cambios necesarios | No* |
+| `create` | Elimina el esquema existente al iniciar y lo vuelve a crear | **Sí** |
+| `create-drop` | Crea el esquema al iniciar y lo elimina al apagar la aplicación | **Sí** |
+
+> ⚠️ (*) `update` no elimina columnas ni tablas que hayan dejado de existir en las entidades.
+
+#### Descripción detallada de cada valor
+
+**`none`**
+```properties
+spring.jpa.hibernate.ddl-auto=none
+```
+Hibernate no toca el esquema de ninguna manera. La aplicación asume que las tablas ya existen y son correctas.  
+Se utiliza en combinación con herramientas externas de migración (Flyway, Liquibase).
+
+---
+
+**`validate`**
+```properties
+spring.jpa.hibernate.ddl-auto=validate
+```
+Al arrancar, Hibernate compara el esquema de la base de datos con las entidades mapeadas.  
+Si hay discrepancias (una columna faltante, un tipo de dato diferente, etc.), lanza `SchemaManagementException` e impide que la aplicación inicie.  
+No modifica nada en la base de datos.
+
+---
+
+**`update`**
+```properties
+spring.jpa.hibernate.ddl-auto=update
+```
+Hibernate compara las entidades con el esquema actual y **agrega** lo que falta: nuevas tablas, nuevas columnas, nuevos índices. Sin embargo, **nunca elimina** columnas o tablas obsoletas.
+
+---
+
+**`create`**
+```properties
+spring.jpa.hibernate.ddl-auto=create
+```
+Al iniciar, Hibernate **elimina todas las tablas** y las vuelve a crear desde cero según las entidades actuales.  
+Todos los datos existentes se pierden en cada reinicio.
+
+---
+
+**`create-drop`**
+```properties
+spring.jpa.hibernate.ddl-auto=create-drop
+```
+Similar a `create`, pero además **elimina todas las tablas al cerrar** el contexto de Spring.  
+Diseñado para pruebas unitarias de integración donde cada ejecución requiere un estado limpio.
+
+---
+
+#### Cuándo utilizar cada uno — por ambiente
+
+| Ambiente | Valor recomendado | Justificación |
+|----------|------------------|---------------|
+| **Local / desarrollo inicial** | `create` o `update` | Agiliza la iteración rápida sin gestionar migraciones manualmente |
+| **Desarrollo (equipo)** | `update` o `validate` | Permite evolucionar el esquema pero ya empieza a exigir coherencia |
+| **Testing / CI** | `create-drop` | Cada ejecución de tests aislada, base de datos siempre limpia |
+| **QA / staging** | `validate` + Flyway/Liquibase | Valida que las migraciones aplicadas sean coherentes con el código |
+| **Producción** | `none` o `validate` | **Nunca** modificar el esquema automáticamente en producción |
+
+#### Ventajas y desventajas
+
+| Valor | ✅ Ventajas | ❌ Desventajas |
+|-------|------------|--------------|
+| `none` | Control total; predecible | Requiere gestión externa del esquema |
+| `validate` | Detecta inconsistencias al arrancar | No corrige nada; solo reporta |
+| `update` | Automático; no borra datos | No elimina columnas huérfanas; riesgo de esquema sucio |
+| `create` | Siempre esquema limpio | Pierde todos los datos en cada reinicio |
+| `create-drop` | Ideal para tests aislados | Pierde datos al cerrar; inutilizable en producción |
+
+#### Propiedad complementaria: mostrar el SQL generado
+
+```properties
+# Muestra el SQL generado por Hibernate en la consola (útil para depuración)
+spring.jpa.show-sql=true
+
+# Formatea el SQL para facilitar su lectura
+spring.jpa.properties.hibernate.format_sql=true
+```
+
+---
+
+## Flyway
+
+### ¿Qué es Flyway?
+
+[Flyway](https://flywaydb.org/) es una herramienta de **migración de bases de datos basada en versiones**.  
+Gestiona la evolución del esquema SQL mediante **archivos de migración numerados** que se aplican de forma ordenada y garantizan que el estado de la BD sea siempre reproducible y auditado.
+
+### ¿Para qué sirve?
+
+- Controlar el **historial de cambios** del esquema de la base de datos.
+- Garantizar que todos los entornos (local, staging, prod) tengan **exactamente el mismo esquema**.
+- Integrar la evolución del esquema al **ciclo de CI/CD**.
+- Auditar cuándo y qué cambios se aplicaron en producción.
+
+### ¿Cómo funciona?
+
+Flyway lee los archivos de migración ubicados en `src/main/resources/db/migration/` y los aplica en orden, registrando cada ejecución en la tabla `flyway_schema_history`.
+
+```
+src/main/resources/db/migration/
+├── V1__crear_tabla_estudiante.sql
+├── V2__agregar_columna_telefono.sql
+├── V3__crear_tabla_curso.sql
+└── V4__datos_iniciales.sql
+```
+
+Convención de nombres: `V{versión}__{descripcion}.sql`
+
+```sql
+-- V1__crear_tabla_estudiante.sql
+CREATE TABLE estudiante (
+    id       BIGINT       NOT NULL AUTO_INCREMENT,
+    nombre   VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email    VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+);
+```
+
+### Integración con Spring Boot
+
+```xml
+<!-- Dependencia en pom.xml -->
+<dependency>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-core</artifactId>
+</dependency>
+<!-- Para MariaDB/MySQL se requiere el módulo adicional -->
+<dependency>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-mysql</artifactId>
+</dependency>
+```
+
+```properties
+# Al usar Flyway, desactivar la generación automática de Hibernate
+spring.jpa.hibernate.ddl-auto=validate
+
+# Flyway se configura automáticamente usando el DataSource de Spring
+spring.flyway.enabled=true
+spring.flyway.locations=classpath:db/migration
+```
+
+### Ventajas y desventajas de Flyway
+
+| ✅ Ventajas | ❌ Desventajas |
+|------------|--------------|
+| Migraciones en SQL puro; fácil de auditar | Solo SQL (no abstrae el dialecto de la BD) |
+| Historial versionado e inmutable | Las migraciones aplicadas no se pueden modificar |
+| Integración nativa con Spring Boot | Migrar entre distintos motores requiere reescribir scripts |
+| Sintaxis simple: solo archivos `.sql` | Menos flexible para cambios de datos complejos |
+| Ampliamente adoptado en producción | La versión Community tiene funciones limitadas |
+| Fácil de integrar en CI/CD | Rollback manual (no automático en Community) |
+
+---
+
+## Liquibase
+
+### ¿Qué es Liquibase?
+
+[Liquibase](https://www.liquibase.org/) es una herramienta de **migración de bases de datos basada en changesets**.  
+A diferencia de Flyway, permite describir los cambios del esquema en **XML, YAML, JSON o SQL**, y su motor genera el SQL apropiado para cada base de datos destino.
+
+### ¿Para qué sirve?
+
+- Gestionar la evolución del esquema de forma **agnóstica al motor** de base de datos.
+- Facilitar **rollbacks automáticos** de cambios (en formatos declarativos).
+- Mantener un historial detallado de cada conjunto de cambios aplicados.
+- Generar el SQL diferencial entre dos estados del esquema.
+
+### ¿Cómo funciona?
+
+Liquibase lee un archivo maestro `db.changelog-master.yaml` (o XML/JSON) que referencia los *changelogs* individuales:
+
+```
+src/main/resources/db/changelog/
+├── db.changelog-master.yaml
+├── v1.0/
+│   ├── 001-crear-tabla-estudiante.yaml
+│   └── 002-agregar-columna-telefono.yaml
+└── v2.0/
+    └── 001-crear-tabla-curso.yaml
+```
+
+```yaml
+# db.changelog-master.yaml
+databaseChangeLog:
+  - include:
+      file: db/changelog/v1.0/001-crear-tabla-estudiante.yaml
+  - include:
+      file: db/changelog/v1.0/002-agregar-columna-telefono.yaml
+```
+
+```yaml
+# v1.0/001-crear-tabla-estudiante.yaml
+databaseChangeLog:
+  - changeSet:
+      id: 001-crear-tabla-estudiante
+      author: equipo-dev
+      changes:
+        - createTable:
+            tableName: estudiante
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nombre
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+```
+
+### Integración con Spring Boot
+
+```xml
+<!-- Dependencia en pom.xml -->
+<dependency>
+    <groupId>org.liquibase</groupId>
+    <artifactId>liquibase-core</artifactId>
+</dependency>
+```
+
+```properties
+# Al usar Liquibase, desactivar la generación automática de Hibernate
+spring.jpa.hibernate.ddl-auto=validate
+
+# Liquibase se configura automáticamente con Spring Boot
+spring.liquibase.enabled=true
+spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.yaml
+```
+
+### Ventajas y desventajas de Liquibase
+
+| ✅ Ventajas | ❌ Desventajas |
+|------------|--------------|
+| Compatible con múltiples formatos (XML, YAML, JSON, SQL) | Mayor curva de aprendizaje que Flyway |
+| Rollback automático en formatos declarativos | YAML/XML más verboso que SQL plano |
+| Independiente del motor de BD (genera el DDL apropiado) | Más complejo de depurar en proyectos grandes |
+| Mejor soporte para cambios de datos complejos | Puede resultar excesivo para proyectos simples |
+| Control granular por `context` y `label` | La generación de SQL implícita puede ser difícil de auditar |
+| Historial detallado en `DATABASECHANGELOG` | Requiere más configuración inicial |
+
+---
+
+## Flyway vs Liquibase
+
+| Característica | Flyway | Liquibase |
+|----------------|--------|-----------|
+| **Formato de migraciones** | Solo SQL (o Java) | XML, YAML, JSON, SQL |
+| **Portabilidad entre BD** | ❌ SQL específico por BD | ✅ Abstrae el dialecto de la BD |
+| **Rollback automático** | ❌ Solo versión Pro | ✅ En formatos declarativos |
+| **Curva de aprendizaje** | Baja | Media-Alta |
+| **Verbosidad** | Baja (archivos `.sql`) | Media-Alta (YAML/XML) |
+| **Integración Spring Boot** | ✅ Nativa | ✅ Nativa |
+| **Auditoría** | `flyway_schema_history` | `DATABASECHANGELOG` |
+| **Idóneo para** | Equipos que dominan SQL | Proyectos multi-BD o con rollbacks complejos |
+| **Comunidad / adopción** | Muy alta | Alta |
+
+### Recomendación de uso por contexto
+
+| Contexto | Herramienta recomendada | Justificación |
+|----------|------------------------|---------------|
+| Proyecto con un solo motor de BD | **Flyway** | Simple, directo, SQL puro y fácil de auditar |
+| Proyecto multi-motor o con rollbacks frecuentes | **Liquibase** | Portabilidad y rollback automático incorporado |
+| Equipo sin experiencia en herramientas de migración | **Flyway** | La curva de aprendizaje es mínima |
+| Proyecto empresarial con governance estricto | **Liquibase** | Mejor control de contextos, etiquetas y auditoría granular |
+| Solo exploración / prototipado | `ddl-auto=create` o `create-drop` | Sin overhead de gestión de migraciones |
+
+> 🏆 **Regla de oro:** En **producción, nunca usar** `ddl-auto=create` ni `ddl-auto=update`. Siempre gestionar el esquema con **Flyway o Liquibase** y establecer `ddl-auto=validate` o `ddl-auto=none`.
+
+---
+
 ## JPQL — Jakarta Persistence Query Language
 
 ### ¿Qué es JPQL?
