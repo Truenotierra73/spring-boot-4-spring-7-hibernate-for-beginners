@@ -3,6 +3,7 @@ package com.agustinbollati.cruddemo.dao;
 import com.agustinbollati.cruddemo.entity.Student;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +83,7 @@ public class StudentDAOImpl implements StudentDAO {
 	@Override
 	@Transactional
 	public int deleteAll() {
-		TypedQuery<Student> query = this.entityManager.createQuery("DELETE FROM Student s", Student.class);
+		Query query = this.entityManager.createQuery("DELETE FROM Student s");
 		int numRowsDeleted = query.executeUpdate();
 
 		return numRowsDeleted;
