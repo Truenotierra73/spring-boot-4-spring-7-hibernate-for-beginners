@@ -33,6 +33,18 @@ Cada carpeta corresponde a un módulo o sección del curso, abordando diferentes
   - [07-bean-scopes](./02-spring-core/07-bean-scopes/): Alcances de los beans en Spring.
   - [08-bean-lifecycle-methods](./02-spring-core/08-bean-lifecycle-methods/): Métodos de ciclo de vida de los beans.
   - [09-java-config-bean](./02-spring-core/09-java-config-bean/): Configuración de beans usando Java Config.
+- [03-hibernate-jpa-crud](./03-hibernate-jpa-crud/): Persistencia con Hibernate y JPA, incluyendo operaciones CRUD.
+  - [00-material-teorico](./03-hibernate-jpa-crud/00-material-teorico/): Material teórico sobre Hibernate, JPA y acceso a datos.
+    - [01-hibernate-jpa.md](./03-hibernate-jpa-crud/00-material-teorico/01-hibernate-jpa.md): Introducción a Hibernate y JPA.
+    - [02-command-line-runner.md](./03-hibernate-jpa-crud/00-material-teorico/02-command-line-runner.md): Uso de CommandLineRunner en aplicaciones Spring Boot.
+    - [03-jpa-development-process.md](./03-hibernate-jpa-crud/00-material-teorico/03-jpa-development-process.md): Proceso de desarrollo con JPA.
+    - [04-DAO.md](./03-hibernate-jpa-crud/00-material-teorico/04-DAO.md): Patrón DAO para encapsular el acceso a datos.
+    - [05-jpa-entity-manager-and-introduction-to-jpa-repository.md](./03-hibernate-jpa-crud/00-material-teorico/05-jpa-entity-manager-and-introduction-to-jpa-repository.md): EntityManager e introducción a JPA Repository.
+    - [06-jpa-entity-manager-crud-apps.md](./03-hibernate-jpa-crud/00-material-teorico/06-jpa-entity-manager-crud-apps.md): Aplicaciones CRUD con EntityManager.
+  - [00-starter-sql-scripts](./03-hibernate-jpa-crud/00-starter-sql-scripts/): Scripts SQL iniciales para preparar usuarios y base de datos.
+    - [01-create-user.sql](./03-hibernate-jpa-crud/00-starter-sql-scripts/01-create-user.sql): Script para crear usuario de base de datos.
+    - [02-student-tracker.sql](./03-hibernate-jpa-crud/00-starter-sql-scripts/02-student-tracker.sql): Script para crear y poblar el esquema `student_tracker`.
+  - [01-curddemo-student](./03-hibernate-jpa-crud/01-curddemo-student/): Ejemplo práctico de aplicación CRUD de estudiantes.
 
 ## Requisitos
 
