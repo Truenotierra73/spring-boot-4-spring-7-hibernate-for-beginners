@@ -106,6 +106,60 @@ No es obligatorio. Hay dos enfoques válidos:
 
 En ambos casos, la separación de capas (Controller / Service / DAO-Repository / Entity) se mantiene igual; lo que cambia es si existe o no una clase DTO adicional entre el Controller y el resto de las capas.
 
+### 3.4. `StudentRequest` y `StudentResponse` como mappers de serialización/deserialización
+
+Dentro del enfoque "Entity + DTO", es muy común **dividir el DTO en dos clases distintas** según la dirección del flujo de datos, en lugar de usar un único DTO genérico:
+
+- **`StudentRequest`**: DTO que representa el JSON que **entra** en una petición (`@RequestBody`). Contiene solo los campos que el cliente puede enviar (por ejemplo, no incluye el `id` en una creación, porque lo genera la base de datos).
+- **`StudentResponse`**: DTO que representa el JSON que **sale** en una respuesta. Contiene solo los campos que se quieren exponer al cliente (por ejemplo, puede excluir una contraseña o incluir campos calculados que no existen en la Entity).
+
+Esta separación es útil porque **la forma de los datos de entrada no siempre coincide con la de salida**: en un `POST` de creación, el request no trae `id`, pero el response sí lo devuelve (recién generado); un campo puede ser obligatorio al crear pero no modificable al actualizar; se puede querer ocultar datos sensibles solo en la respuesta; etc. Usar una sola clase DTO para ambos casos obliga a "forzar" campos opcionales o nulos que no siempre aplican.
+
+```java
+@RestController
+@RequestMapping("/api")
+public class StudentRestController {
+
+    @PostMapping("/students")
+    public StudentResponse addStudent(@RequestBody StudentRequest request) {
+        // Jackson deserializa el JSON de entrada a StudentRequest
+        Student entity = mapToEntity(request);      // Request -> Entity
+        Student saved = studentService.save(entity); // persistencia (JPA)
+        return mapToResponse(saved);                  // Entity -> Response (Jackson lo serializa a JSON)
+    }
+}
+```
+
+En este esquema, `StudentRequest` y `StudentResponse` cumplen el rol de **mapper** en cada dirección: Jackson los usa directamente para la conversión JSON <-> Java, y el código de la aplicación (a mano, o con una librería como MapStruct) se encarga de mapear entre estos DTOs y la Entity.
+
+```
+JSON (petición)  --Jackson-->  StudentRequest  --mapeo manual/MapStruct-->  Entity (Student)
+Entity (Student) --mapeo manual/MapStruct-->  StudentResponse  --Jackson-->  JSON (respuesta)
+```
+
+#### Uso de `record` para `StudentRequest` y `StudentResponse`
+
+En versiones modernas de Java (desde Java 14+, y de uso común desde Java 17/21 en adelante), es habitual implementar estos DTOs como **`record`** en lugar de clases tradicionales. Un `record` es un tipo inmutable que genera automáticamente el constructor, los `getters` (con el mismo nombre del atributo, sin prefijo `get`), `equals()`, `hashCode()` y `toString()`, reduciendo el código repetitivo (*boilerplate*) de un POJO clásico.
+
+```java
+public record StudentRequest(String firstName, String lastName) {
+}
+
+public record StudentResponse(Integer id, String firstName, String lastName) {
+}
+```
+
+Jackson es compatible con `record` de forma nativa: para deserializar, utiliza el **constructor canónico** del `record` (en lugar de setters); para serializar, utiliza los métodos de acceso generados automáticamente (`firstName()`, `lastName()`, en lugar de `getFirstName()`, `getLastName()`).
+
+```java
+String json = "{\"firstName\":\"Mario\",\"lastName\":\"Rossi\"}";
+
+ObjectMapper objectMapper = new ObjectMapper();
+StudentRequest request = objectMapper.readValue(json, StudentRequest.class);
+
+System.out.println(request.firstName()); // Mario
+```
+
 ## 4. Resumen
 
 | Pregunta | Respuesta corta |
