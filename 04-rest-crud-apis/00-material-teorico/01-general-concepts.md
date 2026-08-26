@@ -23,6 +23,48 @@ Piensa en una API como el **menú de un restaurante**: el cliente (aplicación c
 
 En el contexto de desarrollo web y este curso, cuando hablamos de "API" normalmente nos referimos a una **API Web**.
 
+### Condiciones / requisitos que debe cumplir una buena API
+
+No basta con exponer cualquier endpoint HTTP para tener una buena API. Existen una serie de buenas prácticas y convenciones (muchas de ellas heredadas del estilo REST) que se esperan de una API bien diseñada:
+
+#### Naming de los recursos (URIs)
+
+- **Usar sustantivos, no verbos**: la URI debe representar un **recurso** (un "qué"), no una acción (un "cómo"). La acción ya la indica el **método HTTP** (`GET`, `POST`, `PUT`, `DELETE`).
+  - ✅ `GET /api/empleados`
+  - ❌ `GET /api/obtenerEmpleados`
+- **Usar sustantivos en plural** para colecciones de recursos, de forma consistente en toda la API.
+  - ✅ `/api/empleados`, `/api/productos`
+  - ❌ `/api/empleado`, `/api/producto`
+- **Usar minúsculas** en toda la URI, evitando `camelCase` o `PascalCase`.
+  - ✅ `/api/empleados`
+  - ❌ `/api/Empleados`
+- **Usar guiones medios (`kebab-case`)** para separar palabras dentro de un mismo segmento, no `guiones bajos (snake_case)` ni espacios.
+  - ✅ `/api/ordenes-de-compra`
+  - ❌ `/api/ordenes_de_compra`
+- **Representar jerarquías/relaciones con anidamiento de recursos**, cuando un recurso pertenece o depende de otro.
+  - ✅ `GET /api/cursos/{courseId}/estudiantes/{studentId}`
+- **Identificar un recurso específico mediante un path variable** (el identificador único del recurso), no mediante query params.
+  - ✅ `GET /api/empleados/5`
+  - ❌ `GET /api/empleados?id=5`
+- **No incluir extensiones de archivo** (`.json`, `.xml`, etc.) en la URI; el formato se negocia mediante cabeceras HTTP (`Accept`, `Content-Type`).
+  - ✅ `GET /api/empleados/5`
+  - ❌ `GET /api/empleados/5.json`
+- **No incluir verbos CRUD en la URI** (`crear`, `actualizar`, `eliminar`, `listar`), ya que esa semántica la aporta el método HTTP.
+  - ✅ `DELETE /api/empleados/5`
+  - ❌ `GET /api/eliminarEmpleado/5`
+
+#### Otros requisitos generales de una API bien diseñada
+
+- **Consistencia**: usar siempre las mismas convenciones de nombres, formatos de respuesta y códigos de estado en toda la API.
+- **Uso correcto de los métodos HTTP**: cada verbo (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`) debe usarse según su semántica estándar (ver tabla de la sección 2), y no según lo que "resulte más fácil" de programar.
+- **Uso correcto de los códigos de estado HTTP**: por ejemplo, `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `404 Not Found`, `500 Internal Server Error`, en lugar de responder siempre `200 OK` con un mensaje de error en el cuerpo.
+- **Versionado de la API**: prever una estrategia de versionado (por ejemplo, `/api/v1/empleados`) para poder evolucionar la API sin romper a los clientes existentes.
+- **Uso de query params para filtrar, ordenar y paginar**, no para identificar recursos.
+  - ✅ `GET /api/empleados?departamento=ventas&orden=nombre&pagina=2`
+- **Documentación clara** de los endpoints disponibles, parámetros esperados y formatos de respuesta (por ejemplo, mediante OpenAPI/Swagger).
+- **Seguridad**: autenticación y autorización adecuadas (por ejemplo, `HTTPS`, tokens `JWT`, `OAuth2`), evitando exponer datos sensibles.
+- **Manejo de errores consistente**: las respuestas de error deben tener una estructura predecible (código, mensaje, detalles), en lugar de variar según el endpoint.
+
 ---
 
 ## 2. ¿Qué es REST?
